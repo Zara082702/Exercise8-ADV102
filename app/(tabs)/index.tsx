@@ -1,11 +1,8 @@
 import * as ImagePicker from "expo-image-picker";
 import { useRouter } from "expo-router";
-import {
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-} from "firebase/auth";
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
 import { collection, onSnapshot, query, where } from "firebase/firestore";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
@@ -19,9 +16,13 @@ import {
   View,
 } from "react-native";
 
+import { useFonts } from 'expo-font';
+import * as SplashScreen from 'expo-splash-screen';
 import { auth, db } from "../config/firebase";
 import { useAuth } from "../context/AuthContext";
 import { saveProgressPhotoAsBase64 } from "../services/databaseService";
+
+SplashScreen.preventAutoHideAsync();
 
 export default function UnifiedMainScreen() {
   const { user, loading, signInWithGoogle, googleLoading } = useAuth();
@@ -34,6 +35,17 @@ export default function UnifiedMainScreen() {
   const [inventory, setInventory] = useState<any[]>([]);
   const [progressPhotos, setProgressPhotos] = useState<any[]>([]);
   const [uploading, setUploading] = useState(false);
+
+  
+  const [fontsLoaded] = useFonts({
+    'Playfair-Regular': require('../../assets/images/fonts/PlayfairDisplay/PlayfairDisplay-VariableFont_wght.ttf'),
+  });
+
+  useEffect(() => {
+    if (fontsLoaded) {
+      SplashScreen.hideAsync();
+    }
+  }, [fontsLoaded]);
 
   useEffect(() => {
     if (!user) return;
@@ -120,10 +132,10 @@ export default function UnifiedMainScreen() {
     }
   };
 
-  if (loading)
+  if (loading || !fontsLoaded)
     return (
       <View style={styles.centered}>
-        <ActivityIndicator />
+        <ActivityIndicator size="large" color="#4B908C" />
       </View>
     );
 
@@ -302,11 +314,12 @@ const styles = StyleSheet.create({
   authContainer: { flex: 1, justifyContent: "center", padding: 30 },
   mainContainer: { flex: 1 },
   logoText: {
-    fontSize: 32,
+    fontSize: 45, 
     fontWeight: "bold",
     color: "#4B908C",
     textAlign: "center",
     marginBottom: 30,
+    fontFamily: 'Playfair-Regular', 
   },
   welcomeText: {
     fontSize: 24,
@@ -314,6 +327,7 @@ const styles = StyleSheet.create({
     color: "#4B908C",
     textAlign: "center",
     marginBottom: 30,
+    fontFamily: 'Playfair-Regular', 
   },
   input: {
     backgroundColor: "#FFF",
@@ -350,7 +364,11 @@ const styles = StyleSheet.create({
     padding: 16,
     backgroundColor: "rgba(255, 255, 255, 0.95)",
   },
-  btnText: { color: "#FFF", fontWeight: "bold" },
+  btnText: { 
+    color: "#FFF", 
+    fontWeight: "bold", 
+    fontFamily: 'Playfair-Regular' 
+  },
   dividerContainer: {
     flexDirection: "row",
     alignItems: "center",
@@ -358,7 +376,13 @@ const styles = StyleSheet.create({
   },
   dividerLine: { flex: 1, height: 1, backgroundColor: "#BDC3C7" },
   dividerText: { marginHorizontal: 10, color: "#7F8C8D" },
-  toggleText: { textAlign: "center", marginTop: 20, color: "#0b302e" },
+  toggleText: { 
+    textAlign: "center", 
+    marginTop: 20, 
+    color: "#0b302e",
+    fontFamily: 'Playfair-Regular', 
+    fontWeight: '600'
+  },
   progressContainer: {
     marginTop: 20,
     paddingVertical: 15,
@@ -483,4 +507,5 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     color: "#4B908C",
   },
+  photoScroll: {}, 
 });
